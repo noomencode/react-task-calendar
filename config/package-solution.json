@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "react-task-calendar-client-side-solution",
+    "id": "bf2ffb17-1385-43ce-8a35-2847ce762f5f",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.19.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "react-task-calendar description"
+      },
+      "longDescription": {
+        "default": "react-task-calendar description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "react-task-calendar Feature",
+        "description": "The feature that activates elements of the react-task-calendar solution.",
+        "id": "6d4b98a1-0965-4efa-9dbe-c5abb9061ba6",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/react-task-calendar.sppkg"
+  }
+}

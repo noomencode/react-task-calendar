@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.13.1",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.12.0"
+    },
+    "version": "1.19.0",
+    "libraryName": "react-task-calendar",
+    "libraryId": "bf2ffb17-1385-43ce-8a35-2847ce762f5f",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "react-task-calendar",
+    "solutionShortDescription": "react-task-calendar description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
