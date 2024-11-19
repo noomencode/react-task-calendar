@@ -1,43 +1,61 @@
 import * as React from 'react';
 import styles from './TaskCalendar.module.scss';
 import type { ITaskCalendarProps } from './ITaskCalendarProps';
-import { escape } from '@microsoft/sp-lodash-subset';
+import CalendarTable from './CalendarTable';
+import { getQuarter, getQuarterMonths, getISOWeekNumber } from './utilities/dateCalculations';
 
-export default class TaskCalendar extends React.Component<ITaskCalendarProps, {}> {
-  public render(): React.ReactElement<ITaskCalendarProps> {
-    const {
-      description,
-      isDarkTheme,
-      environmentMessage,
-      hasTeamsContext,
-      userDisplayName
-    } = this.props;
-
-    return (
-      <section className={`${styles.taskCalendar} ${hasTeamsContext ? styles.teams : ''}`}>
-        <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
-        </div>
-      </section>
-    );
-  }
+export interface IDateObject {
+  quarter: number,
+  date: Date,
+  week: number,
+  year: number
+  quarterMonths: IQuarterMonth[];
 }
+
+export interface IQuarterMonth {
+  name: string, 
+  index: number
+  weeks: IWeek[];
+}
+
+export interface IWeek {
+  weekNumber: number;
+  startDate: string;  
+  endDate: string;    
+}
+
+const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
+
+  const currentDate:Date = new Date();
+  const currentYear:number = currentDate.getFullYear();
+  const currentQuarter:number = getQuarter(currentDate);
+  const currentWeek: number = getISOWeekNumber(currentDate);
+  const currentQuarterMonths: IQuarterMonth[] = getQuarterMonths(currentQuarter,currentYear);
+
+  const [dateObject,setDateObject] = React.useState<IDateObject>({ quarter: currentQuarter, date: currentDate, week: currentWeek, year: currentYear, quarterMonths: currentQuarterMonths });
+  
+  const updateDateObject = (date:Date):void =>  {
+    setDateObject({ quarter: getQuarter(date), date: date, year: date.getFullYear(), week: getISOWeekNumber(date), quarterMonths: getQuarterMonths(getQuarter(date),date.getFullYear())})
+  }
+
+  const handleNavigation = (direction:string):void => {
+    const newDate = new Date((dateObject.date).toString());
+    if(direction === "forward")newDate.setMonth(newDate.getMonth()+3)
+    else newDate.setMonth(newDate.getMonth()-3)
+    updateDateObject(newDate);
+  }
+  
+  // React.useEffect(()=>{
+  //   updateDateObject(date);
+  // },[date])
+
+  return (
+    <section className={`${styles.taskCalendar}`}>
+      <div>
+        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation}/>
+      </div>
+    </section>
+  );
+};
+
+export default TaskCalendar;

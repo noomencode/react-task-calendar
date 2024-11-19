@@ -5,20 +5,32 @@
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
-  &.teams {
-    font-family: $ms-font-family-fallbacks;
-  }
 }
 
-.welcome {
+.navigator {
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+.calendarTable {
+  border-collapse: collapse;
+    margin: 1em 0;
+    font-size: 0.9em;
+    font-weight: 400;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.calendarTable thead tr {
+  background-color: "[theme: themeLighter]";
   text-align: center;
-}
+} 
 
-.welcomeImage {
-  width: 100%;
-  max-width: 420px;
+.calendarTable th,
+.calendarTable td {
+  border: 1px solid lightgrey;
+  padding: 5px;
 }
-
 .links {
   a {
     text-decoration: none;
