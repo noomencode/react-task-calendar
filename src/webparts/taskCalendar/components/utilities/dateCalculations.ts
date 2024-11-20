@@ -1,4 +1,4 @@
-import { IQuarterMonth, IWeek } from '../TaskCalendar';
+import { IQuarterMonth, IWeek } from "../interfaces/DateInterfaces";
 
 export const getQuarter = (date: Date): number => {
     return Math.ceil((date.getMonth() + 1) / 3);
@@ -68,6 +68,14 @@ export const getQuarter = (date: Date): number => {
     }
     return weeks;
   };
+
+ export const formatDate = (date:string):string => {
+    const tempDate = new Date(date);
+    const day = String(tempDate.getDate()).padStart(2, '0');
+    const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const year = tempDate.getFullYear(); 
+    return `${day}.${month}.${year}`; 
+}
 
 export const getQuarterMonths = (quarter: number, year:number): IQuarterMonth[] => {
   console.log('getQuarterMonths triggered', quarter);

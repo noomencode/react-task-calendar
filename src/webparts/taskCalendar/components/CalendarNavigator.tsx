@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styles from './TaskCalendar.module.scss';
 import { IconButton, Stack, IIconProps } from '@fluentui/react';
-import { IDateObject } from './TaskCalendar';
-
+import { IDateObject } from './interfaces/DateInterfaces';
 
 interface ITableHeader {
     dateObject:IDateObject;

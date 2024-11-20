@@ -1,28 +1,11 @@
 import * as React from 'react';
 import styles from './TaskCalendar.module.scss';
-import type { ITaskCalendarProps } from './ITaskCalendarProps';
+import { IQuarterMonth, IDateObject } from './interfaces/DateInterfaces';
+import ITaskItem from './interfaces/ITaskItem';
+import { ITaskCalendarProps } from './ITaskCalendarProps';
 import CalendarTable from './CalendarTable';
 import { getQuarter, getQuarterMonths, getISOWeekNumber } from './utilities/dateCalculations';
-
-export interface IDateObject {
-  quarter: number,
-  date: Date,
-  week: number,
-  year: number
-  quarterMonths: IQuarterMonth[];
-}
-
-export interface IQuarterMonth {
-  name: string, 
-  index: number
-  weeks: IWeek[];
-}
-
-export interface IWeek {
-  weekNumber: number;
-  startDate: string;  
-  endDate: string;    
-}
+import DataService from '../services/DataService';
 
 const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
 
@@ -31,6 +14,8 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
   const currentQuarter:number = getQuarter(currentDate);
   const currentWeek: number = getISOWeekNumber(currentDate);
   const currentQuarterMonths: IQuarterMonth[] = getQuarterMonths(currentQuarter,currentYear);
+  const [taskItems,setTaskItems] = React.useState<ITaskItem[]>();
+  const spService = new DataService();
 
   const [dateObject,setDateObject] = React.useState<IDateObject>({ quarter: currentQuarter, date: currentDate, week: currentWeek, year: currentYear, quarterMonths: currentQuarterMonths });
   
@@ -44,15 +29,27 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
     else newDate.setMonth(newDate.getMonth()-3)
     updateDateObject(newDate);
   }
+
+  const fetchTaskItems = async ():Promise<void> => {
+    const scope = dateObject.quarterMonths;
+    const start = new Date(scope[0].weeks[0].startDate).toISOString();
+    const end = new Date(scope[scope.length-1].weeks[scope[scope.length-1].weeks.length-1].endDate).toISOString();
+    console.log(start, end);
+    const data = await spService.getTaskItems(start,end);
+    const items = data.map((i:ITaskItem)=>
+    { return {Title: i.Title, StartDate: i.StartDate, EndDate: i.EndDate} }
+  )
+    setTaskItems(items);
+  }
   
-  // React.useEffect(()=>{
-  //   updateDateObject(date);
-  // },[date])
+  React.useEffect(()=>{
+    fetchTaskItems();
+  },[dateObject])
 
   return (
     <section className={`${styles.taskCalendar}`}>
       <div>
-        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation}/>
+        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation} taskItems={taskItems}/>
       </div>
     </section>
   );

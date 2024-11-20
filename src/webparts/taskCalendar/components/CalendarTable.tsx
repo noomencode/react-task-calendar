@@ -1,21 +1,45 @@
 import * as React from 'react';
-import { IDateObject, IQuarterMonth, IWeek } from './TaskCalendar';
+import { IDateObject, IWeek, IQuarterMonth } from './interfaces/DateInterfaces';
+import ITaskItem from './interfaces/ITaskItem';
 import CalendarNavigator from './CalendarNavigator';
-import { Stack } from '@fluentui/react';
+import { IconButton, IIconProps } from '@fluentui/react';
 import styles from './TaskCalendar.module.scss';
-import TaskItem from './TaskItem';
+import { formatDate, getISOWeekNumber } from './utilities/dateCalculations';
 
 interface ICalendarTable {
-    dateObject: IDateObject;
-    handleNavigation: (direction:string)=>void;
+  dateObject: IDateObject;
+  taskItems: ITaskItem[] | undefined;
+  handleNavigation: (direction:string)=>void;
 }
 
-const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation}) => {
+const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation, taskItems}) => {
 
-  const thCount = dateObject.quarterMonths.reduce(
-    (acc, month: IQuarterMonth) => acc + month.weeks.length,
-    0
-  );
+  const addIcon: IIconProps = { iconName: 'Add'}; 
+  console.log(taskItems);
+
+  const renderTaskRow = (task: ITaskItem) => {
+    const taskStartWeek = getISOWeekNumber(new Date(task.StartDate));
+    const taskEndWeek = getISOWeekNumber(new Date(task.EndDate))
+
+    return (
+      <tr key={task.Title}>
+        <td>{task.Title}</td>
+        <td>{formatDate(task.StartDate)}</td>
+        <td>{formatDate(task.EndDate)}</td>
+        {dateObject.quarterMonths.map((month: IQuarterMonth) =>
+          month.weeks.map((week: IWeek) => {
+            const isWithinRange = week.weekNumber >= taskStartWeek && week.weekNumber <= taskEndWeek;
+            return (
+              <td
+                key={`${task.Title}-${week.weekNumber}`}
+                className={isWithinRange ? styles.weekCell : undefined}
+              />
+            );
+          })
+        )}
+      </tr>
+    );
+  };
 
   return (
       <div>
@@ -33,19 +57,16 @@ const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation})
                   <th>Task name</th>
                   <th>Start date</th>
                   <th>End date</th>
-                  {dateObject.quarterMonths.map((month:IQuarterMonth)=>month.weeks.map((week:IWeek)=><th key={week.weekNumber}>{`Week ${week.weekNumber}`}</th>))}
+                  {dateObject.quarterMonths.map((month:IQuarterMonth)=>
+                    month.weeks.map((week:IWeek)=>
+                    (<th key={week.weekNumber}>{`Week ${week.weekNumber}`}</th>))
+                  )}
                 </tr>
               </thead>
               <tbody>
-                
-              <tr>
-                <td>Task1</td>
-                <td>Mon 18 Nov 2024</td>
-                <td>Mon 02 Dev 2024</td>
-          {Array.from({ length: thCount }).map((_, index) => (
-            <td style={index%2?{background:'red'}:{}}key={index}/>
-          ))}
-        </tr>
+                {taskItems?.length ? taskItems.map(renderTaskRow)
+                  : 
+                  <tr><td colSpan={3}><IconButton title="Add task" iconProps={addIcon}/>Add task</td></tr>}
               </tbody>
             </table>
       </div>
