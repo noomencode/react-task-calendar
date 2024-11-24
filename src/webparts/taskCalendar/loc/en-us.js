@@ -1,16 +1,9 @@
-define([], function() {
+define([], function () {
   return {
-    "PropertyPaneDescription": "Description",
-    "BasicGroupName": "Group Name",
-    "DescriptionFieldLabel": "Description Field",
-    "AppLocalEnvironmentSharePoint": "The app is running on your local environment as SharePoint web part",
-    "AppLocalEnvironmentTeams": "The app is running on your local environment as Microsoft Teams app",
-    "AppLocalEnvironmentOffice": "The app is running on your local environment in office.com",
-    "AppLocalEnvironmentOutlook": "The app is running on your local environment in Outlook",
-    "AppSharePointEnvironment": "The app is running on SharePoint page",
-    "AppTeamsTabEnvironment": "The app is running in Microsoft Teams",
-    "AppOfficeEnvironment": "The app is running in office.com",
-    "AppOutlookEnvironment": "The app is running in Outlook",
-    "UnknownEnvironment": "The app is running in an unknown environment"
-  }
+    PropertyPaneDescription:
+      "This web part relies on a tasks list. To make it more universal, all you have to do is click on the button below and a task list with necessary fields will be created for you automatically.",
+    BasicGroupName: "Task list creation",
+    CreateTaskList: "Provision task list",
+    TaskListAlreadyExists: "Task list already exists in site",
+  };
 });

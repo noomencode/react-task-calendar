@@ -15,7 +15,6 @@ export const getQuarter = (date: Date): number => {
     
     //If StartDate is not monthIndex then get last month's last date - startdate. If >= 3 then exclude
     if(startMonth !== month && lastDayOfStartMonth-startDate >= 3){
-      console.log(lastDayOfStartMonth,startDate)
         return false;
     }
     //If EndDate is not monthIndex and >= 4 then exclude
@@ -37,8 +36,7 @@ export const getQuarter = (date: Date): number => {
   export const getWeeksInMonth = (monthIndex: number, year: number): IWeek[] => {
 
     const weeks: IWeek[] = [];
-    let date = new Date(year, monthIndex, 1);
-    console.log(year, monthIndex)
+    const date = new Date(year, monthIndex, 1);
 
     // Loop and move date back until Monday
     while (date.getDay() !== 1) {
@@ -78,7 +76,6 @@ export const getQuarter = (date: Date): number => {
 }
 
 export const getQuarterMonths = (quarter: number, year:number): IQuarterMonth[] => {
-  console.log('getQuarterMonths triggered', quarter);
     const monthNames = [
       'January', 'February', 'March',    // Q1
       'April', 'May', 'June',            // Q2
@@ -95,7 +92,6 @@ export const getQuarterMonths = (quarter: number, year:number): IQuarterMonth[] 
       weeks: getWeeksInMonth(monthIndex,year)
     }
   });
-  console.log(months);
   return months;
 };
 

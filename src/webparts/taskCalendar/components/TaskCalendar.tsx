@@ -6,8 +6,9 @@ import { ITaskCalendarProps } from './ITaskCalendarProps';
 import CalendarTable from './CalendarTable';
 import { getQuarter, getQuarterMonths, getISOWeekNumber } from './utilities/dateCalculations';
 import DataService from '../services/DataService';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 
-const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
+const TaskCalendar: React.FC<ITaskCalendarProps> = ({context,listId}) => {
 
   const currentDate:Date = new Date();
   const currentYear:number = currentDate.getFullYear();
@@ -34,8 +35,7 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
     const scope = dateObject.quarterMonths;
     const start = new Date(scope[0].weeks[0].startDate).toISOString();
     const end = new Date(scope[scope.length-1].weeks[scope[scope.length-1].weeks.length-1].endDate).toISOString();
-    console.log(start, end);
-    const data = await spService.getTaskItems(start,end);
+    const data = await spService.getTaskItems(start,end,listId);
     const items = data.map((i:ITaskItem)=>
     { return {Title: i.Title, StartDate: i.StartDate, EndDate: i.EndDate} }
   )
@@ -43,13 +43,16 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context}) => {
   }
   
   React.useEffect(()=>{
-    fetchTaskItems();
-  },[dateObject])
+    if(listId)fetchTaskItems();
+  },[dateObject,listId])
 
   return (
     <section className={`${styles.taskCalendar}`}>
       <div>
-        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation} taskItems={taskItems}/>
+        {listId ? 
+        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation} taskItems={taskItems} context={context} listId={listId}/> : 
+        <MessageBar messageBarType={MessageBarType.blocked}>Task list missing. Please configure web part properties to get started.</MessageBar>
+        }
       </div>
     </section>
   );

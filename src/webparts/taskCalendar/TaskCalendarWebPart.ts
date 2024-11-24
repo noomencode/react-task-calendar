@@ -3,7 +3,7 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneButton, PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
@@ -11,29 +11,33 @@ import * as strings from 'TaskCalendarWebPartStrings';
 import TaskCalendar from './components/TaskCalendar';
 import { ITaskCalendarProps } from './components/ITaskCalendarProps';
 import { getSP } from './pnpjsConfig';
-
+import DataService from './services/DataService';
 
 export interface ITaskCalendarWebPartProps {
-  description: string;
+  listId: string;
 }
 
 export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCalendarWebPartProps> {
 
-
+  
+  private _spService:DataService; 
+  
   public render(): void {
-    const element: React.ReactElement<ITaskCalendarProps> = React.createElement(
+    console.log('render happened:',this._spService);
+    const element: React.ReactElement<ITaskCalendarProps> = React.createElement( 
       TaskCalendar,
       {
-        context:this.context
+        context:this.context,
+        listId: this.properties.listId || ''
       }
     );
-
     ReactDom.render(element, this.domElement);
   }
 
   protected async onInit(): Promise<void> {
-    getSP(this.context);
-
+      console.log('onInit happened',this.context);
+      getSP(this.context);
+      this._spService = new DataService();
   }
 
   protected onDispose(): void {
@@ -44,6 +48,21 @@ export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCale
     return Version.parse('1.0');
   }
 
+  protected async createList():Promise<void> {
+    try {
+      const result = await this._spService.createTaskList();
+      if (result) {
+        this.properties.listId = result; 
+        this.context.propertyPane.refresh(); 
+        this.render();
+      }
+    } catch (error) {
+      console.error("Error creating task list:", error);
+    }
+    console.log('createlist')
+  } 
+
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -51,12 +70,16 @@ export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCale
           header: {
             description: strings.PropertyPaneDescription
           },
+          
           groups: [
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyPaneButton('', {
+                  text:!this.properties.listId ? strings.CreateTaskList : strings.TaskListAlreadyExists,
+                  buttonType:PropertyPaneButtonType.Primary,
+                  onClick: this.createList.bind(this),
+                  disabled:this.properties.listId ? true : false
                 })
               ]
             }

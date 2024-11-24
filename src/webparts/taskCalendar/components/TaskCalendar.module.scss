@@ -10,41 +10,42 @@
 .navigator {
   font-size: 1.5em;
   font-weight: 600;
+  margin-bottom: 1em;
+  text-align: center;
+}
+.calendarTableWrapper {
+  width: 100%;
+  overflow-x: auto; 
 }
 
 .calendarTable {
-  border-collapse: collapse;
-    margin: 1em 0;
-    font-size: 0.9em;
-    font-weight: 400;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-spacing: 0.3em; 
+  margin: 1em 0;
+  font-size: 1em; 
+  font-weight: 400;
+  width: 100%;
 }
 
 .calendarTable thead tr {
   background-color: "[theme: themeLighter]";
   text-align: center;
-} 
+  font-weight: bold; 
+  text-transform: uppercase; 
+  letter-spacing: 0.05em;
+}
 
 .calendarTable th,
 .calendarTable td {
   border: 1px solid lightgrey;
-  padding: 5px;
+  padding: 8px;
+  text-align: center; 
 }
 
 .weekCell {
   background: "[theme: themePrimary]";
 }
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
 
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
-    }
-  }
+.addTask {
+  display: flex;
+  align-items: center;
 }
