@@ -11,14 +11,15 @@ export default class DataService {
 
     public async getTaskItems(startOfQuarter:string, endOfQuarter:string, listId:string):Promise<any> {
         try {
-            return await this._sp.web.lists.getById(listId).items.select('Title','StartDate','EndDate').filter(`(StartDate ge datetime'${startOfQuarter}')and(EndDate le datetime'${endOfQuarter}')`)();
+            return await this._sp.web.lists.getById(listId).items.select('Title','StartDate','EndDate','Id')
+            .filter(`(EndDate ge datetime'${startOfQuarter}')and(StartDate le datetime'${endOfQuarter}')`)();
         } catch (error) {
             console.log(error);
         }
     }
     public async createTaskList():Promise<string> {
         const listEnsureResult = await this._sp.web.lists.ensure("Tasks");
-        // check if the list was created, or if it already exists:
+        // Check if the list was created, or if it already exists:
         const r = await listEnsureResult.list.select("Id")();
         if (listEnsureResult.created) {
             console.log(`Task list created! Id:${r.Id}`);

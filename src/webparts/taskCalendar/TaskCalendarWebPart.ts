@@ -23,7 +23,6 @@ export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCale
   private _spService:DataService; 
   
   public render(): void {
-    console.log('render happened:',this._spService);
     const element: React.ReactElement<ITaskCalendarProps> = React.createElement( 
       TaskCalendar,
       {
@@ -35,7 +34,6 @@ export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCale
   }
 
   protected async onInit(): Promise<void> {
-      console.log('onInit happened',this.context);
       getSP(this.context);
       this._spService = new DataService();
   }
@@ -59,7 +57,6 @@ export default class TaskCalendarWebPart extends BaseClientSideWebPart<ITaskCale
     } catch (error) {
       console.error("Error creating task list:", error);
     }
-    console.log('createlist')
   } 
 
 

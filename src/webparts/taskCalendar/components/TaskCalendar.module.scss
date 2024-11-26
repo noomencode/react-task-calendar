@@ -41,6 +41,17 @@
   text-align: center; 
 }
 
+.taskName {
+  white-space:nowrap;
+  max-width:150px;
+  text-overflow:ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+}
+.taskName:hover {
+  text-decoration: underline;
+}
+
 .weekCell {
   background: "[theme: themePrimary]";
 }

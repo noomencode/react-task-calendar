@@ -37,9 +37,13 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context,listId}) => {
     const end = new Date(scope[scope.length-1].weeks[scope[scope.length-1].weeks.length-1].endDate).toISOString();
     const data = await spService.getTaskItems(start,end,listId);
     const items = data.map((i:ITaskItem)=>
-    { return {Title: i.Title, StartDate: i.StartDate, EndDate: i.EndDate} }
+    { return {Title: i.Title, StartDate: i.StartDate, EndDate: i.EndDate, Id: i.Id} }
   )
     setTaskItems(items);
+  }
+
+  const handleFormSubmit = ():void => {
+    fetchTaskItems()
   }
   
   React.useEffect(()=>{
@@ -50,7 +54,7 @@ const TaskCalendar: React.FC<ITaskCalendarProps> = ({context,listId}) => {
     <section className={`${styles.taskCalendar}`}>
       <div>
         {listId ? 
-        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation} taskItems={taskItems} context={context} listId={listId}/> : 
+        <CalendarTable dateObject={dateObject} handleNavigation={handleNavigation} taskItems={taskItems} context={context} listId={listId} handleFormSubmit={handleFormSubmit}/> : 
         <MessageBar messageBarType={MessageBarType.blocked}>Task list missing. Please configure web part properties to get started.</MessageBar>
         }
       </div>

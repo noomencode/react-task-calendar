@@ -1,36 +1,53 @@
 import * as React from 'react';
 import { IDateObject, IWeek, IQuarterMonth } from './interfaces/DateInterfaces';
+import { IconButton, IIconProps } from '@fluentui/react';
 import ITaskItem from './interfaces/ITaskItem';
 import CalendarNavigator from './CalendarNavigator';
 import styles from './TaskCalendar.module.scss';
-import { formatDate, getISOWeekNumber } from './utilities/dateCalculations';
+import { formatDate } from './utilities/dateCalculations';
 import Form from './Form';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { useBoolean } from '@fluentui/react-hooks';
+
 
 interface ICalendarTable {
   dateObject: IDateObject;
   taskItems: ITaskItem[] | undefined;
   handleNavigation: (direction:string)=>void;
+  handleFormSubmit: ()=>void;
   context: WebPartContext;
   listId: string;
 }
 
-const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation, taskItems, context, listId}) => {
+const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation, taskItems, context, listId, handleFormSubmit}) => {
+  const [isFormOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
+  const [formType, setFormType] = React.useState<"Add" | "Edit">("Add");
+  const [listItemId, setListItemId] = React.useState<number|undefined>(undefined);
 
-  console.log(taskItems);
+  const buttonStyles = { root: { marginRight: 8 } };
+  const addIcon: IIconProps = { iconName: 'Add'}; 
+
+  const handleFormOpen = (type:"Add" | "Edit", listItemId?: number):void => {
+    setFormType(type);
+    setListItemId(listItemId)
+    openPanel()
+  }
+
+  const handleFormDismiss = ():void => {
+    setListItemId(undefined);
+    dismissPanel()
+  }
 
   const renderTaskRow = (task: ITaskItem):React.ReactElement =>  {
-    const taskStartWeek = getISOWeekNumber(new Date(task.StartDate));
-    const taskEndWeek = getISOWeekNumber(new Date(task.EndDate))
 
     return (
       <tr key={task.Title}>
-        <td title={task.Title} style={{whiteSpace:'nowrap', maxWidth:'150px', textOverflow:'ellipsis', overflow: 'hidden'}}>{task.Title}</td>
+        <td onClick={()=>handleFormOpen("Edit", task.Id)} className={styles.taskName} title={task.Title}>{task.Title}</td>
         <td>{formatDate(task.StartDate)}</td>
         <td>{formatDate(task.EndDate)}</td>
         {dateObject.quarterMonths.map((month: IQuarterMonth) =>
           month.weeks.map((week: IWeek) => {
-            const isWithinRange = week.weekNumber >= taskStartWeek && week.weekNumber <= taskEndWeek;
+              const isWithinRange = new Date(task.StartDate) <= new Date(week.endDate) && new Date(task.EndDate) >= new Date(week.startDate);
             return (
               <td
                 key={`${task.Title}-${week.weekNumber}`}
@@ -69,10 +86,13 @@ const CalendarTable: React.FC<ICalendarTable> = ({dateObject, handleNavigation, 
                 <tbody>
                   {taskItems?.map(renderTaskRow)}
                   
-                  {(taskItems?.length || 0) <= 9 ? <tr><td colSpan={3}><Form listId={listId} context={context}/></td></tr> : null}
+                  <tr><td colSpan={3}><div className={styles.addTask}>
+                    <IconButton styles={buttonStyles} title="Add task" iconProps={addIcon} onClick={()=>handleFormOpen("Add")}/><span>Add task</span>
+                    </div></td></tr>
                 </tbody>
               </table>
             </div>
+            <Form isFormOpen={isFormOpen} onDismiss={handleFormDismiss} listId={listId} context={context} formType={formType} listItemId={listItemId} handleFormSubmit={handleFormSubmit}/>
       </div>
   );
 };

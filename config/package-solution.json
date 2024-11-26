@@ -3,7 +3,7 @@
   "solution": {
     "name": "react-task-calendar-client-side-solution",
     "id": "bf2ffb17-1385-43ce-8a35-2847ce762f5f",
-    "version": "1.3.0.0",
+    "version": "1.4.1.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
